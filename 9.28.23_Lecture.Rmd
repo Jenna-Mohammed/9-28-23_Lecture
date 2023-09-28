@@ -1,0 +1,70 @@
+---
+title: "9.28.23.Lecture"
+output: github_document
+date: '2023-09-28'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(ggridges)
+```
+
+```{r}
+weather_df = 
+  rnoaa::meteo_pull_monitors(
+    c("USW00094728", "USW00022534", "USS0023B17S"),
+    var = c("PRCP", "TMIN", "TMAX"), 
+    date_min = "2021-01-01",
+    date_max = "2022-12-31") |>
+  mutate(
+    name = recode(
+      id, 
+      USW00094728 = "CentralPark_NY", 
+      USC00519397 = "Molokai_HI",
+      USS0023B17S = "Waterhole_WA"),
+    tmin = tmin / 10,
+    tmax = tmax / 10) |>
+  select(name, id, everything())
+
+weather_df
+```
+
+lLet's make a plot!
+
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax)) + 
+  geom_point()
+
+# ^ define variables within aes function
+# geom point creates scatterplot
+```
+
+Pipes and stuff
+
+```{r}
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point()
+
+# creates exactly the same plot
+# can filter based on year, place
+
+weather_df |>
+  filter(name == "CentralPark_NY") |>
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point()
+
+ggp_nyc_weather=
+  weather_df |>
+  filter(name == "CentralPark_NY") |>
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point()
+```
+
+## Fancy Plot
+
+
